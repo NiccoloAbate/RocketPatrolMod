@@ -20,16 +20,6 @@ class Play extends Phaser.Scene {
 
         this.starfield = this.add.tileSprite(0, 0, width, height, 'starfield').setOrigin(0, 0);
         
-        let rectColor = 0x00FF00;
-        let borderColor = 0xffffff;
-        // green UI background
-        this.add.rectangle(0, borderUISize + borderPadding, width, borderUISize * 2, rectColor).setOrigin(0, 0);
-        // white borders
-        this.add.rectangle(0, 0, width, borderUISize, borderColor).setOrigin(0, 0);
-        this.add.rectangle(0, height - borderUISize, width, borderUISize, borderColor).setOrigin(0, 0);
-        this.add.rectangle(0, 0, borderUISize, height, borderColor).setOrigin(0, 0);
-        this.add.rectangle(width - borderUISize, 0, borderUISize, height, borderColor).setOrigin(0, 0);
-        
         // add rocket (p1)
         this.p1Rocket = new Rocket(this, width/2, height - borderUISize - borderPadding, 'rocket');
         this.p1Rocket.setOrigin(0.5, 0);
@@ -37,6 +27,16 @@ class Play extends Phaser.Scene {
         this.ship01 = new Spaceship(this, width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
         this.ship02 = new Spaceship(this, width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
         this.ship03 = new Spaceship(this, width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+
+        let rectColor = 0x00FF00;
+        let borderColor = 0xFFFFFF;
+        // green UI background
+        this.add.rectangle(0, borderUISize + borderPadding, width, borderUISize * 2, rectColor).setOrigin(0, 0);
+        // white borders
+        this.add.rectangle(0, 0, width, borderUISize, borderColor).setOrigin(0, 0);
+        this.add.rectangle(0, height - borderUISize, width, borderUISize, borderColor).setOrigin(0, 0);
+        this.add.rectangle(0, 0, borderUISize, height, borderColor).setOrigin(0, 0);
+        this.add.rectangle(width - borderUISize, 0, borderUISize, height, borderColor).setOrigin(0, 0);
         
         // animation config
         this.anims.create({
