@@ -1,4 +1,3 @@
-console.log("Hello from main.js");
 
 let config = {
     type: Phaser.CANVAS,
