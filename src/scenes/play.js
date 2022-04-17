@@ -6,10 +6,13 @@ class Play extends Phaser.Scene {
     preload() {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png'); // single player rocket
-        this.load.image('rocketp1', './assets/rocket.png'); // 2 player p1 rocket
-        this.load.image('rocketp2', './assets/rocket.png'); // 2 player p2 rocket
+        this.load.image('rocketp1', './assets/rocketp1.png'); // 2 player p1 rocket
+        this.load.image('rocketp2', './assets/rocketp2.png'); // 2 player p2 rocket
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
+        this.load.image('asteroidsbig', './assets/asteroids_big.png');
+        // problem with asset
+        //this.load.image('asteroidsmed', './assets/asteroids_mid.png');
 
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png',
@@ -23,7 +26,9 @@ class Play extends Phaser.Scene {
         this.defineKeys();
 
         this.starfield = this.add.tileSprite(0, 0, width, height, 'starfield').setOrigin(0, 0);
-        
+        this.asteroidsbig = this.add.tileSprite(0, 0, width, height, 'asteroidsbig').setOrigin(0, 0);
+        //this.asteroidsmed = this.add.tileSprite(0, 0, width, height, 'asteroidsmed').setOrigin(0, 0);
+
         Game.players = new Array(Game.settings.numPlayers);
         for (let i = 0; i < Game.players.length; ++i) {
             Game.players[i] = {
@@ -48,7 +53,7 @@ class Play extends Phaser.Scene {
         }
         else {
             // add rocket (p1) - neutral texture
-            this.rockets[0] = new Rocket(this, width/2, height - borderUISize - borderPadding, 'rocketp1');
+            this.rockets[0] = new Rocket(this, width/2, height - borderUISize - borderPadding, 'rocket');
             this.rockets[0].setOrigin(0.5, 0);
             this.rockets[0].playerID = 0;
             this.rockets[0].setControls(keyLEFT, keyRIGHT, keyUP);
@@ -119,29 +124,39 @@ class Play extends Phaser.Scene {
         this.scoreConfig.fixedWidth = 0;
 
         // audio manager
-        Audio.testPlay();
+        this.music = Audio.addMulti(this, 'playMusic');
+        this.music.setGlobalConfig({loop: true});
+        this.music.play();
     }
 
     update(time, delta) {
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.sound.play('sfx_select');
-            Audio.testRemove();
+            this.music.destroy();
             this.scene.restart();
         }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             this.sound.play('sfx_select');
-            Audio.testRemove();
+            this.music.destroy();
             this.scene.start("menu");
         }
 
         this.starfield.tilePositionX -= 4;
-        
+        this.asteroidsbig.tilePositionX -= 1;
+
         if (!this.gameOver) {
             // update time
             this.timeLeft -= delta;
             this.timerText.text = this.formatTimerText(this.timeLeft);
+
+            const pitchDriftTime = 5000;
+            let det = clamp(((pitchDriftTime - this.timeLeft) / pitchDriftTime), 0, 1) * (-1 * 1200);
+            this.music.setGlobalConfig({detune: det});
+            
+
             if (this.timeLeft <= 0) {
+                //this.music.setGlobalConfig({detune: 0});
                 this.timeUp();
             }
 
@@ -217,5 +232,7 @@ class Play extends Phaser.Scene {
         this.add.text(width/2, height/2 + 64, 'Press (R) to Restart or <- for Menu',
             this.scoreConfig).setOrigin(0.5);
         this.gameOver = true;
+        this.music.setConfig('Synth 1', {mute : true});
+        this.music.setConfig('Drums', {mute : true});
     }
 }
