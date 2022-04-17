@@ -38,6 +38,12 @@ class Rocket extends Phaser.GameObjects.Sprite {
 
         if (Phaser.Input.Keyboard.JustDown(this.keyFire) && !this.firing) {
             this.firing = true;
+            const minDetune = -1000;
+            const maxDetune = 1000;
+            let detune = getRandomInclusive(minDetune, maxDetune);
+            let pan = (((this.x / Game.config.width) * 2.0) - 1.0);
+            this.sfxRocket.setDetune(detune);
+            this.sfxRocket.setPan(pan)
             this.sfxRocket.play();  // play sfx
         }
     }

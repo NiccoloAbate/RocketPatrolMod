@@ -35,6 +35,19 @@ class Menu extends Phaser.Scene {
         menuConfig.color = '#800';
         this.add.text(width / 2, height / 2 + borderUISize + borderPadding,
             'Press <- for Novice or -> for Expert', menuConfig).setOrigin(0.5);
+        
+        this.add.text(width / 2, height / 2 + 2 * borderUISize + 2 * borderPadding,
+            'Choose # player with up/down', menuConfig).setOrigin(0.5);
+        menuConfig.align = 'center';
+        menuConfig.backgroundColor = '#F3B141';
+        menuConfig.color = '#843605';
+        this.numPlayers = 1;
+        this.numPlayersToString = n => n + ' Player';
+        this.numPlayersText = this.add.text(width / 2,
+            height / 2 + 3 * borderUISize + 3 * borderPadding,
+            this.numPlayersToString(this.numPlayers), menuConfig).setOrigin(0.5);
+
+        Audio.preload(this);
     }
 
     create() {
@@ -42,14 +55,27 @@ class Menu extends Phaser.Scene {
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
     }
 
     update() {
+        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+            const maxPlayers = 2;
+            this.numPlayers = Math.min(this.numPlayers + 1, maxPlayers);
+            this.numPlayersText.text = this.numPlayersToString(this.numPlayers);
+            this.sound.play('sfx_select');
+        }
+        if (Phaser.Input.Keyboard.JustDown(keyDOWN)) {
+            const minPlayers = 1;
+            this.numPlayers = Math.max(this.numPlayers - 1, minPlayers);
+            this.numPlayersText.text = this.numPlayersToString(this.numPlayers);
+            this.sound.play('sfx_select');
+        }
         if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
             // easy mode
             Game.settings = {
-                numPlayers: 2,
+                numPlayers: this.numPlayers,
                 spaceshipSpeed: 3,
                 gameTimer: 60000    
             }
@@ -59,7 +85,7 @@ class Menu extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
             // hard mode
             Game.settings = {
-                numPlayers: 2,
+                numPlayers: this.numPlayers,
                 spaceshipSpeed: 4,
                 gameTimer: 45000    
             }
