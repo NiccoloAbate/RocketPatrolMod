@@ -147,7 +147,7 @@ class Play extends Phaser.Scene {
 
         if (!this.gameOver) {
             // update time
-            this.timeLeft -= delta;
+            this.timeLeft -= delta*2;
             this.timerText.text = this.formatTimerText(this.timeLeft);
 
             const pitchDriftTime = 5000;
